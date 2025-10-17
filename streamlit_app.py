@@ -79,7 +79,7 @@ fig_classificacao = px.bar(
     color_discrete_sequence=["#0099CC"]
 )
 st.plotly_chart(fig_classificacao, use_container_width=True)
-                                                                                                                                                                                                                                                                                 id="regime-filter",
+                                                                                                                                                                                                                        id="regime-filter",
                                                                                                                                                                                                                                                                                                                                 placeholder="Selecione um regime",
                                                                                                                                                                                                                                                                                                                                                 clearable=True
                                                                                                                                                                                                                                                                                                                                                             )
