@@ -78,10 +78,8 @@ fig_classificacao = px.bar(
     title="Faturamento por Classificação",
     color_discrete_sequence=["#0099CC"]
 )
-st                                                                                                                                                        id="regime-filter",
-                                                                                                                                                                                                                                                                                                                                placeholder="Selecione um regime",
-                                                                                                                                                                                                                                                                                                                                                clearable=True
-                                                                                                                                                                                                                                                                                                                                                            )
+st.plotly_chart(fig_classificacao, use_container_width=True)
+                                                                                                                                                                                                                                                                                                                                             )
                                                                                                                                                                                                                                                                                                                                                                     ], style={"width": "24%", "display": "inline-block", "padding": "5px"}),
                                                                                                                                                                                                                                                                                                                                                                         ]),
 
