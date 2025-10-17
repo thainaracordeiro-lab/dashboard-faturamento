@@ -78,8 +78,7 @@ fig_classificacao = px.bar(
     title="Faturamento por Classificação",
     color_discrete_sequence=["#0099CC"]
 )
-st.plotly_chart(fig_classificacao, use_container_width=True)
-                                                                                                                                                                                                                        id="regime-filter",
+st                                                                                                                                                        id="regime-filter",
                                                                                                                                                                                                                                                                                                                                 placeholder="Selecione um regime",
                                                                                                                                                                                                                                                                                                                                                 clearable=True
                                                                                                                                                                                                                                                                                                                                                             )
