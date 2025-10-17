@@ -49,16 +49,34 @@ col1, col2 = st.columns(2)
 
 with col1:
     ranking = dff.groupby("Colaborador")["Faturamento"].sum().reset_index().sort_values(by="Faturamento", ascending=False)
-    fig_ranking = px.bar(ranking, x="Colaborador", y="Faturamento", title="Ranking de Faturamento por Colaborador", color_discrete_sequence=["#003366"])
+    fig_ranking = px.bar(
+        ranking,
+        x="Colaborador",
+        y="Faturamento",
+        title="Ranking de Faturamento por Colaborador",
+        color_discrete_sequence=["#003366"]
+    )
     st.plotly_chart(fig_ranking, use_container_width=True)
 
 with col2:
     faturamento_grupo = dff.groupby("Grupo")["Faturamento"].sum().reset_index()
-    fig_grupo = px.bar(faturamento_grupo, x="Grupo", y="Faturamento", title="Faturamento por Grupo", color_discrete_sequence=["#006699"])
+    fig_grupo = px.bar(
+        faturamento_grupo,
+        x="Grupo",
+        y="Faturamento",
+        title="Faturamento por Grupo",
+        color_discrete_sequence=["#006699"]
+    )
     st.plotly_chart(fig_grupo, use_container_width=True)
 
 faturamento_classificacao = dff.groupby("Classificação")["Faturamento"].sum().reset_index()
-fig_classificacao = px.bar(faturamento_classificacao, x="Classificação", y="Faturamento", title="Faturamento por Classificação", color_discrete_sequence=["#0099CC"])
+fig_classificacao = px.bar(
+    faturamento_classificacao,
+    x="Classificação",
+    y="Faturamento",
+    title="Faturamento por Classificação",
+    color_discrete_sequence=["#0099CC"]
+)
 st.plotly_chart(fig_classificacao, use_container_width=True)
 
 
