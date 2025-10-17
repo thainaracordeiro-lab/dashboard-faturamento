@@ -1,7 +1,9 @@
-# dashboard_faturamento.py
+import streamlit as st
 import pandas as pd
-from dash import Dash, dcc, html, Input, Output
 import plotly.express as px
+
+# === Configuração da página ===
+st.set_page_config(page_title="Faturamento por Colaborador", layout="wide")
 
 # === Carregar os dados ===
 df = pd.read_excel("Python.xlsx")
@@ -9,43 +11,56 @@ df = pd.read_excel("Python.xlsx")
 # Padronizar nomes de colunas
 df.columns = df.columns.str.strip().str.replace(".", " ", regex=False).str.title()
 df.rename(columns={"Faturamento Do Serviço": "Faturamento"}, inplace=True)
-
-# Garantir que a coluna "Faturamento" seja numérica
 df["Faturamento"] = pd.to_numeric(df["Faturamento"], errors="coerce").fillna(0)
 
-# === App Dash ===
-app = Dash(__name__)
-app.title = "Faturamento por Colaborador"
+# === Título ===
+st.title("📊 Dashboard de Faturamento por Colaborador")
 
-# === Layout ===
-app.layout = html.Div([
-    html.H1("📊 Dashboard de Faturamento por Colaborador", style={"textAlign": "center"}),
+# === Filtros ===
+col1, col2, col3 = st.columns(3)
 
-        html.Div([
-                html.Div([
-                            html.Label("Grupo:"),
-                                        dcc.Dropdown(
-                                                        options=[{"label": g, "value": g} for g in sorted(df["Grupo"].dropna().unique())],
-                                                                        id="grupo-filter",
-                                                                                        placeholder="Selecione um grupo",
-                                                                                                        clearable=True
-                                                                                                                    )
-                                                                                                                            ], style={"width": "24%", "display": "inline-block", "padding": "5px"}),
+with col1:
+    grupo = st.selectbox("Grupo:", options=[""] + sorted(df["Grupo"].dropna().unique().tolist()))
 
-                                                                                                                                    html.Div([
-                                                                                                                                                html.Label("Classificação:"),
-                                                                                                                                                            dcc.Dropdown(
-                                                                                                                                                                            options=[{"label": c, "value": c} for c in sorted(df["Classificação"].dropna().unique())],
-                                                                                                                                                                                            id="class-filter",
-                                                                                                                                                                                                            placeholder="Selecione uma classificação",
-                                                                                                                                                                                                                            clearable=True
-                                                                                                                                                                                                                                        )
-                                                                                                                                                                                                                                                ], style={"width": "24%", "display": "inline-block", "padding": "5px"}),
+with col2:
+    classificacao = st.selectbox("Classificação:", options=[""] + sorted(df["Classificação"].dropna().unique().tolist()))
 
-                                                                                                                                                                                                                                                        html.Div([
-                                                                                                                                                                                                                                                                    html.Label("Regime:"),
-                                                                                                                                                                                                                                                                                dcc.Dropdown(
-                                                                                                                                                                                                                                                                                                options=[{"label": r, "value": r} for r in sorted(df["Regime"].dropna().unique())],
+with col3:
+    regime = st.selectbox("Regime:", options=[""] + sorted(df["Regime"].dropna().unique().tolist()))
+
+# === Aplicar filtros ===
+dff = df.copy()
+if grupo:
+    dff = dff[dff["Grupo"] == grupo]
+if classificacao:
+    dff = dff[dff["Classificação"] == classificacao]
+if regime:
+    dff = dff[dff["Regime"] == regime]
+
+# === KPIs ===
+total_faturamento = dff["Faturamento"].sum()
+total_colaboradores = dff["Colaborador"].nunique()
+
+st.markdown(f"### 💰 Faturamento Total: R$ {total_faturamento:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."))
+st.markdown(f"#### 👥 Colaboradores Ativos: {total_colaboradores}")
+
+# === Gráficos ===
+col1, col2 = st.columns(2)
+
+with col1:
+    ranking = dff.groupby("Colaborador")["Faturamento"].sum().reset_index().sort_values(by="Faturamento", ascending=False)
+    fig_ranking = px.bar(ranking, x="Colaborador", y="Faturamento", title="Ranking de Faturamento por Colaborador", color_discrete_sequence=["#003366"])
+    st.plotly_chart(fig_ranking, use_container_width=True)
+
+with col2:
+    faturamento_grupo = dff.groupby("Grupo")["Faturamento"].sum().reset_index()
+    fig_grupo = px.bar(faturamento_grupo, x="Grupo", y="Faturamento", title="Faturamento por Grupo", color_discrete_sequence=["#006699"])
+    st.plotly_chart(fig_grupo, use_container_width=True)
+
+faturamento_classificacao = dff.groupby("Classificação")["Faturamento"].sum().reset_index()
+fig_classificacao = px.bar(faturamento_classificacao, x="Classificação", y="Faturamento", title="Faturamento por Classificação", color_discrete_sequence=["#0099CC"])
+st.plotly_chart(fig_classificacao, use_container_width=True)
+
                                                                                                                                                                                                                                                                                                                 id="regime-filter",
                                                                                                                                                                                                                                                                                                                                 placeholder="Selecione um regime",
                                                                                                                                                                                                                                                                                                                                                 clearable=True
