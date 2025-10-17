@@ -1,3 +1,4 @@
+
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -69,6 +70,7 @@ with col2:
     )
     st.plotly_chart(fig_grupo, use_container_width=True)
 
+# === Faturamento por Classificação ===
 faturamento_classificacao = dff.groupby("Classificação")["Faturamento"].sum().reset_index()
 fig_classificacao = px.bar(
     faturamento_classificacao,
